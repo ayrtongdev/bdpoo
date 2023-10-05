@@ -1,0 +1,58 @@
+import requests
+from bs4 import BeautifulSoup
+import csv
+from pymongo import MongoClient
+
+client = MongoClient('mongodb://localhost:27017/')
+
+db = client['my_com']
+
+collection_collection = db['collection']
+
+
+url = 'https://pt.wikipedia.org/wiki/Michael_Jackson'
+
+
+response = requests.get(url)
+
+
+if response.status_code == 200:
+  
+    soup = BeautifulSoup(response.text, 'html.parser')
+
+    
+    info_elements = soup.find_all('td', {'style': 'vertical-align: top; text-align: left;'})
+
+    
+    data = []
+
+    
+    for info in info_elements:
+        data.append(info.get_text(strip=True))
+
+
+    attribute_value_pairs = [data[i:i+2] for i in range(0, len(data), 2)]
+
+    for item in attribute_value_pairs:
+        if len(item) == 2:
+            attribute, value = item
+            documento = {
+                "attribute": attribute,
+                "value": value
+            }
+            collection_collection.insert_one(documento)
+        else:
+            attribute = item[0]
+
+            documento = {
+                "attribute": attribute,
+                "value": "N/A"
+            }
+            collection_collection.insert_one(documento)
+
+    print('Dados extraidos e salvos em mongoDB')
+        
+else:
+    print('Não foi possível acessar a página da Wikipedia.')
+
+
