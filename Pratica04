@@ -1,0 +1,97 @@
+use Empresa
+switched to db Empresa
+
+db.Pessoa.insertMany([
+ {
+ nome: "Fernando",
+ idade: 40,
+ cargo: "Coordenador",
+ cidade: "São Luís"
+ },
+ {
+ nome: "Juliana",
+ idade: 29,
+ cargo: "Consultora",
+ cidade: "Natal"
+ },
+ {
+ nome: "Roberto",
+ idade: 37,
+ cargo: "Supervisor",
+ cidade: "Goiania"
+ },
+ {
+ nome: "Camila",
+ idade: 34,
+ cargo: "Arquiteta",
+ cidade: "Florianópolis"
+ },
+ {
+ nome: "Gustavo",
+ idade: 33,
+ cargo: "Desenvolvedor",
+ cidade: "Vitória"
+ },
+ {
+ nome: "Renata",
+ idade: 31,
+ cargo: "Produtora",
+ cidade: "Cuiabá"
+ },
+ {
+ nome: "Rafael",
+ idade: 35,
+ cargo: "Consultor",
+ cidade: "Campo Grande"
+ },
+ {
+ nome: "Daniela",
+ idade: 38,
+ cargo: "Arquiteta",
+ cidade: "Belém"
+ },
+ {
+ nome: "Guilherme",
+ idade: 36,
+ cargo: "Coordenador",
+ cidade: "Maceió"
+ },
+ {
+ nome: "Fernanda",
+ idade: 30,
+ cargo: "Produtora",
+ cidade: "Teresina"
+ }
+])
+
+db.Pessoa.update({ nome: "Fernando" }, { $set: { nome: "Fernando Pereira", cidade: "São Luís" } })
+db.Pessoa.update({ nome: "Juliana" }, { $set: { nome: "Juliana Lima", cidade: "Natal" } })
+
+db.Pessoa.find({ idade: { $gt: 30 } }, { _id: 0 })
+
+db.Pessoa.aggregate([
+ { $group: { _id: "$cidade", mediaIdade: { $avg: "$idade" } } }
+])
+
+db.createCollection("SetoresDeTrabalho")
+
+db.SetoresDeTrabalho.insertMany([
+ { sigla: "Adm", descricao: "Administração", salario: 6200 },
+ { sigla: "Fin", descricao: "Finanças", salario: 4800 },
+ { sigla: "Prod", descricao: "Produção", salario: 5800 },
+ { sigla: "Res", descricao: "Pesquisa e Desenvolvimento", salario: 7200 }
+])
+
+db.SetoresDeTrabalho.aggregate([
+ { $sort: { salario: -1 } }, 
+ { $limit: 1 } 
+])
+
+db.SetoresDeTrabalho.aggregate([
+ { $sort: { salario: 1 } }, 
+ { $limit: 1 } 
+])
+
+db.SetoresDeTrabalho.aggregate([
+ { $group: { _id: null, mediaSalario: { $avg: "$salario" } } }
+])
